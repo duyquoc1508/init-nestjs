@@ -11,20 +11,18 @@ export class AuthService {
   ) { }
 
   async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.userService.getUser(username);
+    const user = await this.userService.findUser({ username });
     if (!user) return null;
     const passwordValid = await argon.verify(user.password, password);
     if (passwordValid) {
-      const { password, ...result } = user;
-      return result;
+      user.password = undefined;
+      return user;
     }
     return null;
   }
 
-  async login(user: any) {
+  login(user: any) {
     const payload = { username: user.username, _id: user._id };
-    return {
-      accessToken: this.jwtService.sign(payload)
-    }
+    return { accessToken: this.jwtService.sign(payload) }
   }
 }

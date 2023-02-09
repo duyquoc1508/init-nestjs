@@ -1,16 +1,16 @@
 import { Body, Controller, Request, Post, UseGuards } from '@nestjs/common';
+import { createDiffieHellmanGroup } from 'crypto';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   async login(@Request() req) {
-    console.log(req);
-    return req.user;
+    return this.authService.login(req.user);
   }
 }
